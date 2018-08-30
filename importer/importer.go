@@ -1,6 +1,12 @@
 package importer
 
-import "fmt"
+import (
+	"fmt"
+	"os/exec"
+	"os"
+	"bytes"
+	"github.com/pkg/errors"
+)
 
 
 const gitRepoPath = "git@%v:%v/%v.git"
@@ -12,20 +18,26 @@ type GitLabPackage struct {
 	Name    string
 	Domain  string
 	Group   string
+	path    string
 	gitRepo string
 }
 
 func (g *GitLabPackage) Import(branch string) error{
-	g.repo()
+	g.gitRepo = fmt.Sprintf(gitRepoPath, g.Domain, g.Group, g.Name)
+	g.path    = gopathSrc()+g.Domain+"/"+g.Group+"/"+g.Name
+	var errb bytes.Buffer
+	cmd := exec.Command("git", "clone", g.gitRepo, "-b", "dev", g.path)
+	cmd.Stderr = &errb
+	err := cmd.Run()
+	if err != nil {
+		return errors.Wrap(err, errb.String())
+	}
+	fmt.Println("err:", errb.String())
 	return nil
 }
 
-func (g *GitLabPackage) repo() {
-	g.gitRepo = fmt.Sprintf(gitRepoPath, g.Domain, g.Group, g.Name)
-}
-
 func (g *GitLabPackage) GetPath() string{
-	return g.Domain+"/"+g.Group+"/"+g.Name
+	return g.path
 }
 
 func Import(domain, group, name, branch string) (*GitLabPackage, error) {
@@ -36,4 +48,8 @@ func Import(domain, group, name, branch string) (*GitLabPackage, error) {
 	}
 	err := g.Import(branch)
 	return &g, err
+}
+
+func gopathSrc() string {
+	return  os.Getenv("GOPATH")+"/src/"
 }

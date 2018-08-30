@@ -41,13 +41,11 @@ func main() {
 
 	//parser := &docopt.Parser{OptionsFirst: true}
 	//args, err := parser.ParseArgs(usage, nil, "huy")
-	tgmsDeploy := importer.GitLabPackage{
-		Domain: "gitlab.qarea.org",
-		Group:  "tgms",
-		Name:   "tgms-deploy",
+	tgmsDeploy, err := importer.Import("gitlab.qarea.org","tgms","tgms-deploy", "master")
+	if err != nil {
+		panic(err)
 	}
-
-	s, err := gitlab_deploy_services.FetchServices(&tgmsDeploy)
+	s, err := gitlab_deploy_services.FetchServices(tgmsDeploy)
 	fmt.Println(s, err)
 }
 

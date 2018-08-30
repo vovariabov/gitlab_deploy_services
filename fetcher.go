@@ -4,7 +4,6 @@ import (
 	"github.com/vovariabov/gitlab_deploy_services/importer"
 	"io/ioutil"
 	"github.com/go-yaml/yaml"
-	"os"
 )
 
 const (
@@ -18,7 +17,7 @@ type AllServices struct {
 
 func FetchServices(tgmsDeploy *importer.GitLabPackage) (services []string, err error) {
 	var (
-		path = gopathSrc() + tgmsDeploy.GetPath()
+		path = tgmsDeploy.GetPath()
 		list   AllServices
 	)
 	file, err := ioutil.ReadFile(path + serviceListFile)
@@ -32,11 +31,6 @@ func FetchServices(tgmsDeploy *importer.GitLabPackage) (services []string, err e
 	services = convertNames(list.Services)
 	return
 }
-
-func gopathSrc() string {
-	return  os.Getenv("GOPATH")+"/src/"
-}
-
 func convertNames(names []string) []string {
 	var resNames []string
 	for _, n := range names {

@@ -2,38 +2,57 @@ package importer
 
 import (
 	"fmt"
-	"os/exec"
 	"os"
-	"bytes"
+	"github.com/vovariabov/gitlab_deploy_services/commands"
+	"strings"
 	"github.com/pkg/errors"
 )
 
 
-const gitRepoPath = "git@%v:%v/%v.git"
+const (
+	gitRepoPath  = "git@%v:%v/%v.git"
+	existsErrMsg = "already exists"
+)
 type Importer interface {
-	Import(branch string) error
+	Import() error
+	Branch() ([]string, error)
 }
+
+var c = commands.Initialize()
 
 type GitLabPackage struct {
-	Name    string
-	Domain  string
-	Group   string
-	path    string
-	gitRepo string
+	Name     string
+	Domain   string
+	Group    string
+	path     string
+	gitRepo  string
+	imported bool
 }
 
-func (g *GitLabPackage) Import(branch string) error{
+func (g *GitLabPackage) Import() (err error) {
 	g.gitRepo = fmt.Sprintf(gitRepoPath, g.Domain, g.Group, g.Name)
-	g.path    = gopathSrc()+g.Domain+"/"+g.Group+"/"+g.Name
-	var errb bytes.Buffer
-	cmd := exec.Command("git", "clone", g.gitRepo, "-b", "dev", g.path)
-	cmd.Stderr = &errb
-	err := cmd.Run()
-	if err != nil {
-		return errors.Wrap(err, errb.String())
+	g.path = gopathSrc()+g.Domain+"/"+g.Group+"/"+g.Name
+	err = c.Clone(g.gitRepo, g.path)
+	if err != nil && !cloneExistsErr(err) {
+		return
 	}
-	fmt.Println("err:", errb.String())
+	g.imported = true
 	return nil
+}
+
+func (g *GitLabPackage) Branch() (branches []string, err error) {
+	if !g.imported {
+		return nil, errors.New("not imported")
+	}
+	branches, err = c.Branch(g.path)
+	return
+}
+
+func (g *GitLabPackage) Merge(targetBranch, sourceBranch string) (err error) {
+	if !g.imported {
+		return errors.New("not imported")
+	}
+	return c.Merge(g.path, sourceBranch, targetBranch)
 }
 
 func (g *GitLabPackage) GetPath() string{
@@ -46,10 +65,14 @@ func Import(domain, group, name, branch string) (*GitLabPackage, error) {
 		Group: group,
 		Domain: domain,
 	}
-	err := g.Import(branch)
+	err := g.Import()
 	return &g, err
 }
 
 func gopathSrc() string {
 	return  os.Getenv("GOPATH")+"/src/"
+}
+
+func cloneExistsErr(err error) bool {
+	return strings.Contains(err.Error(), existsErrMsg) 
 }

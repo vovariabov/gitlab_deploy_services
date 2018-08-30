@@ -7,9 +7,25 @@
   revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
   version = "v2.2.1"
 
+[[projects]]
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/vovariabov/gitlab_deploy_services"
+  packages = [
+    ".",
+    "commands",
+    "importer"
+  ]
+  revision = "042c62d46f524f9d232062052e928f84d092bfc6"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "053bf567a5ce90d2e89fa7b9149350223218fa5b0b469915606095f9acd1ddfc"
+  inputs-digest = "1f263f01f89aacae86279c7f427f77afdefcf1dba1da42b485f80f400bc80a09"
   solver-name = "gps-cdcl"
   solver-version = 1

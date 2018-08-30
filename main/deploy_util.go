@@ -6,14 +6,7 @@ import (
 	"fmt"
 )
 
-const (
-	DOMAIN     = "gitlab.qarea.org"
-	GROUP      = "tgms"
-	TGMSDEPLOY = "tgms-deploy"
-	master     = "master"
-	dev        = "dev"
-	staging    = "staging"
-)
+
 
 func main() {
 
@@ -49,7 +42,7 @@ func main() {
 
 	//parser := &docopt.Parser{OptionsFirst: true}
 	//args, err := parser.ParseArgs(usage, nil, "huy")
-	tgmsDeploy, err := importer.Import(DOMAIN, GROUP, TGMSDEPLOY)
+	tgmsDeploy, err := importer.Import(importer.DOMAIN, importer.GROUP, importer.TGMSDEPLOY)
 	if err != nil {
 		panic(err)
 	}

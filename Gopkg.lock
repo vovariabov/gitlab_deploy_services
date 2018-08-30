@@ -2,12 +2,6 @@
 
 
 [[projects]]
-  branch = "master"
-  name = "github.com/docopt/docopt-go"
-  packages = ["."]
-  revision = "ee0de3bc6815ee19d4a46c7eb90f829db0e014b1"
-
-[[projects]]
   name = "github.com/go-yaml/yaml"
   packages = ["."]
   revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
@@ -16,6 +10,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "fed24c9130aece4a03864d88eedd00d82fc3fd137bff385d273bbe707ba9a347"
+  inputs-digest = "053bf567a5ce90d2e89fa7b9149350223218fa5b0b469915606095f9acd1ddfc"
   solver-name = "gps-cdcl"
   solver-version = 1

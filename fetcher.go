@@ -4,6 +4,7 @@ import (
 	"github.com/vovariabov/gitlab_deploy_services/importer"
 	"io/ioutil"
 	"github.com/go-yaml/yaml"
+	"fmt"
 )
 
 const (
@@ -15,7 +16,7 @@ type AllServices struct {
 }
 
 
-func FetchServices(tgmsDeploy *importer.GitLabPackage) (services []string, err error) {
+func FetchServices(tgmsDeploy *importer.GitLabPackage) (services []importer.GitLabPackage, err error) {
 	var (
 		path = tgmsDeploy.GetPath()
 		list   AllServices
@@ -28,7 +29,14 @@ func FetchServices(tgmsDeploy *importer.GitLabPackage) (services []string, err e
 	if err != nil {
 		return
 	}
-	services = convertNames(list.Services)
+	s := convertNames(list.Services)
+	for _, ms := range s {
+		service, err := importer.Import(tgmsDeploy.Domain, tgmsDeploy.Group, ms)
+		if err == nil {
+			fmt.Println("Cloned Sucessfully", ms)
+			services = append(services, *service)
+		}
+	}
 	return
 }
 func convertNames(names []string) []string {

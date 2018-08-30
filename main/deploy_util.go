@@ -1,11 +1,19 @@
 package main
 
 import (
-	"fmt"
 	"github.com/vovariabov/gitlab_deploy_services/importer"
 	"github.com/vovariabov/gitlab_deploy_services"
+	"fmt"
 )
 
+const (
+	DOMAIN     = "gitlab.qarea.org"
+	GROUP      = "tgms"
+	TGMSDEPLOY = "tgms-deploy"
+	master     = "master"
+	dev        = "dev"
+	staging    = "staging"
+)
 
 func main() {
 
@@ -41,12 +49,14 @@ func main() {
 
 	//parser := &docopt.Parser{OptionsFirst: true}
 	//args, err := parser.ParseArgs(usage, nil, "huy")
-	tgmsDeploy, err := importer.Import("gitlab.qarea.org","tgms","tgms-deploy", "master")
+	tgmsDeploy, err := importer.Import(DOMAIN, GROUP, TGMSDEPLOY)
 	if err != nil {
 		panic(err)
 	}
 	s, err := gitlab_deploy_services.FetchServices(tgmsDeploy)
-	fmt.Println(s, err)
+	for _, item := range s {
+		fmt.Println(item.GetPath())
+	}
 }
 
 

@@ -59,7 +59,7 @@ func (g *GitLabPackage) GetPath() string{
 	return g.path
 }
 
-func Import(domain, group, name, branch string) (*GitLabPackage, error) {
+func Import(domain, group, name string) (*GitLabPackage, error) {
 	var g = GitLabPackage{
 		Name: name,
 		Group: group,

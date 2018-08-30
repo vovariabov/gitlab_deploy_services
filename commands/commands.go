@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"fmt"
 	"os/exec"
 	"bytes"
 	"github.com/pkg/errors"
@@ -29,7 +28,6 @@ func (c *Command) Clone(repo, path string) (err error) {
 	if err != nil {
 		return errors.Wrap(err, errb.String())
 	}
-	fmt.Println( errb.String())
 	return
 }
 

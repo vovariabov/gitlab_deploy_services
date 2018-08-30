@@ -16,8 +16,8 @@ type Collection interface {
 type Command struct{}
 
 func (c *Command) Clone(msName string) (err error) {
-	arg := fmt.Sprintf("git@gitlab.qarea.org:tgms/%s.git", msName)
-	osCmd := exec.Command("git clone", arg)
+	arg :=[]string{"clone" ,fmt.Sprintf("git@gitlab.qarea.org:tgms/%s.git", msName)}
+	osCmd := exec.Command("git", arg...)
 	var out []byte
 	out, err = osCmd.Output()
 	if err != nil {

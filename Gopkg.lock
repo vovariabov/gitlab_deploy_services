@@ -13,19 +13,9 @@
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
   version = "v0.8.0"
 
-[[projects]]
-  branch = "master"
-  name = "github.com/vovariabov/gitlab_deploy_services"
-  packages = [
-    ".",
-    "commands",
-    "importer"
-  ]
-  revision = "c9be19a114f9fd18f38a14920a48f4d32be22c01"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1f263f01f89aacae86279c7f427f77afdefcf1dba1da42b485f80f400bc80a09"
+  inputs-digest = "ee2923412c48d73152d61150415c04a032b1e0dc9fb7bebbdeed42b819428d42"
   solver-name = "gps-cdcl"
   solver-version = 1

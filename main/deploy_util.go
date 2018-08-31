@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"gitlab_deploy_services/ms_object"
+	"github.com/vovariabov/gitlab_deploy_services/ms_object"
 
 	"github.com/vovariabov/gitlab_deploy_services"
 	"github.com/vovariabov/gitlab_deploy_services/importer"
@@ -47,11 +46,8 @@ func main() {
 		panic(err)
 	}
 	s, err := gitlab_deploy_services.FetchServices(tgmsDeploy)
-	for _, item := range s {
-		fmt.Println(item.GetPath())
-	}
 
 	msCollection := ms_object.InitMsObj(s)
-	msCollection.Mss["planning"].Import()
+	msCollection.Mss["planningms"].Import()
 
 }

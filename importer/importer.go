@@ -36,6 +36,7 @@ type GitLabPackage struct {
 func (g *GitLabPackage) Import() (err error) {
 	err = c.Clone(g.Name)
 	if err != nil && !cloneExistsErr(err) {
+		//handle cloneExistsErr -> git fetch
 		return
 	}
 	g.imported = true

@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
+	"strings"
 )
 
 const (
@@ -109,7 +110,7 @@ func getCurrentBranch(path string) string {
 	cmd.Stderr = &errb
 	cmd.Stdout = &outb
 	cmd.Run()
-	return outb.String()
+	return strings.TrimSuffix(outb.String(), "\n")
 }
 
 func execute(cmd *exec.Cmd, outb *bytes.Buffer, t ...string) (err error) {

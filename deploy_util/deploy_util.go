@@ -25,14 +25,16 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	s, err := gitlab_deploy_services.FetchServices(tgmsDeploy)
-
-	msCollection := ms_object.InitMsObj(s)
-
 	parser := &docopt.Parser{OptionsFirst: false}
 	args, _ := parser.ParseArgs(usage, nil, "1.0")
 //	fmt.Printf("%+v %T", args, args)
 	if args[import_].(bool) {
+		s, err := gitlab_deploy_services.FetchServices(tgmsDeploy)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		msCollection := ms_object.InitMsObj(s)
 		if args[all].(bool) {
 			for _, ms := range msCollection.Mss {
 				err := ms.CloneRepo()
@@ -50,6 +52,12 @@ func main() {
 		}
 	}
 	if args[deploy_to_staging].(bool) {
+		s, err := gitlab_deploy_services.FetchServices(tgmsDeploy)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		msCollection := ms_object.InitMsObj(s)
 		if args[all].(bool) {
 			for _, ms := range msCollection.Mss {
 				err := ms.DeployServiceToStaging()
@@ -67,6 +75,13 @@ func main() {
 		}
 	}
 	if args[deploy_to_production].(bool) {
+
+		s, err := gitlab_deploy_services.FetchServices(tgmsDeploy)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		msCollection := ms_object.InitMsObj(s)
 		if args[all].(bool) {
 			for _, ms := range msCollection.Mss {
 				err := ms.DeployServiceToProduction()

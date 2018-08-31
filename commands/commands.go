@@ -3,9 +3,10 @@ package commands
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"os/exec"
 	"regexp"
+
+	"os"
 
 	"github.com/pkg/errors"
 )
@@ -29,6 +30,9 @@ func Initialize(Domain, Group string) Collection {
 type Collection interface {
 	Clone(string) error
 	Branch(string) (branches []string, err error)
+	DeployToProduction(msName string) (err error)
+	DeployToStaging(msName string) (err error)
+	GitFetch(path string)
 }
 
 type Command struct {
@@ -38,13 +42,17 @@ type Command struct {
 	baseRepo string
 }
 
+func GoPathSrc() string {
+	return os.Getenv("GOPATH") + "/src/"
+}
+
 func (c *Command) Clone(msName string) (err error) {
 	return execute(exec.Command("git", "clone", fmt.Sprintf(c.baseRepo, msName), c.basePath+msName), &bytes.Buffer{})
 }
 
 func (c *Command) Branch(msName string) (branches []string, err error) {
 	var outb bytes.Buffer
-	err = execute(exec.Command("git", "branch"), &outb, c.basePath + msName)
+	err = execute(exec.Command("git", "branch"), &outb, c.basePath+msName)
 	if err != nil {
 		return nil, err
 	}
@@ -52,21 +60,9 @@ func (c *Command) Branch(msName string) (branches []string, err error) {
 	return
 }
 
-func (c *Command) checkOut(msName, targetBranch string) (err error) {
-	return execute(exec.Command("git", "checkout", targetBranch),&bytes.Buffer{}, c.basePath+msName)
-}
-
-func (c *Command) merge(path string, sourceBranch string, targetBranch string) (err error) {
-	err = c.checkOut(path, targetBranch)
-	if err != nil {
-		return
-	}
-	return execute(exec.Command("git", "merge", sourceBranch), &bytes.Buffer{}, path)
-}
-
 func (c *Command) DeployToStaging(msName string) (err error) {
 	var path = c.basePath + msName
-	c.gitFetch(path)
+	c.GitFetch(path)
 	err = c.merge(path, dev, staging)
 	if err != nil {
 		return err
@@ -76,12 +72,28 @@ func (c *Command) DeployToStaging(msName string) (err error) {
 
 func (c *Command) DeployToProduction(msName string) (err error) {
 	var path = c.basePath + msName
-	c.gitFetch(path)
+	c.GitFetch(path)
 	err = c.merge(path, staging, master)
 	if err != nil {
 		return err
 	}
 	return c.pushChanges(path)
+}
+
+func (c *Command) GitFetch(path string) {
+	execute(exec.Command("git", "fetch"), &bytes.Buffer{}, path)
+}
+
+func (c *Command) checkOut(msName, targetBranch string) (err error) {
+	return execute(exec.Command("git", "checkout", targetBranch), &bytes.Buffer{}, c.basePath+msName)
+}
+
+func (c *Command) merge(path string, sourceBranch string, targetBranch string) (err error) {
+	err = c.checkOut(path, targetBranch)
+	if err != nil {
+		return
+	}
+	return execute(exec.Command("git", "merge", sourceBranch), &bytes.Buffer{}, path)
 }
 
 func (c *Command) pushChanges(path string) error {
@@ -98,15 +110,6 @@ func getCurrentBranch(path string) string {
 	cmd.Stdout = &outb
 	cmd.Run()
 	return outb.String()
-}
-
-func (c *Command) gitFetch(path string) {
-	execute(exec.Command("git", "fetch"), &bytes.Buffer{}, path)
-}
-
-
-func GoPathSrc() string {
-	return os.Getenv("GOPATH") + "/src/"
 }
 
 func execute(cmd *exec.Cmd, outb *bytes.Buffer, t ...string) (err error) {

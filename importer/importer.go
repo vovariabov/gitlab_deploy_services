@@ -3,8 +3,7 @@ package importer
 import (
 	"strings"
 
-	"github.com/pkg/errors"
-	"github.com/vovariabov/gitlab_deploy_services/commands"
+	"gitlab_deploy_services/commands"
 )
 
 const (
@@ -20,8 +19,9 @@ func InitImporter() Importer {
 }
 
 type Importer interface {
-	Import() error
-	Branch() ([]string, error)
+	CloneRepo() (err error)
+	DeployServiceToStaging() (err error)
+	DeployServiceToProduction() (err error)
 }
 
 var c = commands.Initialize(DOMAIN, GROUP)
@@ -33,30 +33,23 @@ type GitLabPackage struct {
 	imported bool
 }
 
-func (g *GitLabPackage) Import() (err error) {
+func (g *GitLabPackage) CloneRepo() (err error) {
 	err = c.Clone(g.Name)
 	if err != nil && !cloneExistsErr(err) {
-		//handle cloneExistsErr -> git fetch
 		return
 	}
+	c.GitFetch(g.GetPath())
 	g.imported = true
 	return nil
 }
 
-func (g *GitLabPackage) Branch() (branches []string, err error) {
-	if !g.imported {
-		return nil, errors.New("not imported")
-	}
-	branches, err = c.Branch(g.Name)
-	return
+func (g *GitLabPackage) DeployServiceToStaging() (err error) {
+	return c.DeployToProduction(g.Name)
 }
 
-//func (g *GitLabPackage) Merge(targetBranch, sourceBranch string) (err error) {
-//	if !g.imported {
-//		return errors.New("not imported")
-//	}
-//	return c.Merge(g.Name, sourceBranch, targetBranch)
-//}
+func (g *GitLabPackage) DeployServiceToProduction() (err error) {
+	return c.DeployToProduction(g.Name)
+}
 
 func (g *GitLabPackage) GetPath() string {
 	return commands.GoPathSrc() + g.Domain + "/" + g.Group + "/" + g.Name
@@ -68,7 +61,7 @@ func Import(domain, group, name string) (*GitLabPackage, error) {
 		Group:  group,
 		Domain: domain,
 	}
-	err := g.Import()
+	err := g.CloneRepo()
 	return &g, err
 }
 

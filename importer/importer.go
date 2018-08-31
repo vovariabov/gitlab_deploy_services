@@ -1,8 +1,8 @@
 package importer
 
 import (
+	"gitlab_deploy_services/commands"
 	"strings"
-	"github.com/vovariabov/gitlab_deploy_services/commands"
 )
 
 const (
@@ -37,7 +37,7 @@ func (g *GitLabPackage) CloneRepo() (err error) {
 	if err != nil && !cloneExistsErr(err) {
 		return
 	}
-	c.GitFetch(g.GetPath())
+	c.PullOrigin(g.GetPath())
 	g.imported = true
 	return nil
 }

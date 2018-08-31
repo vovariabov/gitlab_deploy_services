@@ -1,20 +1,22 @@
 package main
 
 import (
-	"github.com/docopt/docopt-go"
 	"fmt"
-	"github.com/vovariabov/gitlab_deploy_services/importer"
-	"github.com/vovariabov/gitlab_deploy_services"
-	"github.com/vovariabov/gitlab_deploy_services/ms_object"
+	"gitlab_deploy_services"
+	"gitlab_deploy_services/importer"
+	"gitlab_deploy_services/ms_object"
+
+	"github.com/docopt/docopt-go"
 )
 
 const (
-	import_  = "import"
-	all      = "--all"
-	service = "<service>"
-	deploy_to_staging = "deploy_to_staging"
+	import_              = "import"
+	all                  = "--all"
+	service              = "<service>"
+	deploy_to_staging    = "deploy_to_staging"
 	deploy_to_production = "deploy_to_production"
 )
+
 func main() {
 	usage := `GitLab Deploy Services
 	Usage: 	deploy_util import (--all | <service>...)
@@ -24,7 +26,7 @@ func main() {
 
 	parser := &docopt.Parser{OptionsFirst: false}
 	args, _ := parser.ParseArgs(usage, nil, "1.0")
-//	fmt.Printf("%+v %T", args, args)
+	//	fmt.Printf("%+v %T", args, args)
 	if args[import_].(bool) {
 		tgmsDeploy, err := importer.Import(importer.DOMAIN, importer.GROUP, importer.TGMSDEPLOY)
 		if err != nil {

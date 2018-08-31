@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	serviceListFile = "/group_vars/all"
+	serviceListFile = "/service_list/all"
 	nameSuffics     = "ms"
 )
 type AllServices struct {

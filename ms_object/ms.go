@@ -7,7 +7,8 @@ import (
 func InitMsObj(mss []importer.GitLabPackage) MsObj {
 	mapms := make(map[string]importer.Importer)
 	for _, val := range mss {
-		mapms[val.Name] = &val
+		v := val
+		mapms[v.Name] = &v
 	}
 	return MsObj{
 		Mss: mapms,

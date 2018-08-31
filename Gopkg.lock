@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  branch = "master"
+  name = "github.com/docopt/docopt-go"
+  packages = ["."]
+  revision = "ee0de3bc6815ee19d4a46c7eb90f829db0e014b1"
+
+[[projects]]
   name = "github.com/go-yaml/yaml"
   packages = ["."]
   revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
@@ -13,20 +19,9 @@
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
   version = "v0.8.0"
 
-[[projects]]
-  branch = "master"
-  name = "github.com/vovariabov/gitlab_deploy_services"
-  packages = [
-    ".",
-    "commands",
-    "importer",
-    "ms_object"
-  ]
-  revision = "4e5310fd193b1dbf9b9a7e86055f016b3e4a21b4"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7ea06115dbac72487fdd63573d83d00df3eb8da54355bd24cfc390edba97394a"
+  inputs-digest = "8cae536501fdcbcb482e464d2340ccb7e1982ea7603c970928a21e4475c1da9d"
   solver-name = "gps-cdcl"
   solver-version = 1

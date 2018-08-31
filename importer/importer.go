@@ -2,8 +2,7 @@ package importer
 
 import (
 	"strings"
-
-	"gitlab_deploy_services/commands"
+	"github.com/vovariabov/gitlab_deploy_services/commands"
 )
 
 const (
@@ -44,10 +43,18 @@ func (g *GitLabPackage) CloneRepo() (err error) {
 }
 
 func (g *GitLabPackage) DeployServiceToStaging() (err error) {
+	err = g.CloneRepo()
+	if err != nil {
+		return
+	}
 	return c.DeployToProduction(g.Name)
 }
 
 func (g *GitLabPackage) DeployServiceToProduction() (err error) {
+	err = g.CloneRepo()
+	if err != nil {
+		return
+	}
 	return c.DeployToProduction(g.Name)
 }
 

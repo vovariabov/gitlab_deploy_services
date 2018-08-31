@@ -34,7 +34,7 @@ type Collection interface {
 	Branch(string) (branches []string, err error)
 	DeployToProduction(msName string) (err error)
 	DeployToStaging(msName string) (err error)
-	GitFetch(path string)
+	PullOrigin(path string) (err error)
 }
 
 type Command struct {
@@ -64,7 +64,6 @@ func (c *Command) Branch(msName string) (branches []string, err error) {
 
 func (c *Command) DeployToStaging(msName string) (err error) {
 	var path = c.basePath + msName
-	c.GitFetch(path)
 	err = c.checkoutAndPull(path, dev)
 	if err != nil {
 		return
@@ -82,7 +81,7 @@ func (c *Command) DeployToStaging(msName string) (err error) {
 
 func (c *Command) DeployToProduction(msName string) (err error) {
 	var path = c.basePath + msName
-	c.GitFetch(path)
+
 	err = c.checkoutAndPull(path, staging)
 	if err != nil {
 		return
@@ -98,8 +97,8 @@ func (c *Command) DeployToProduction(msName string) (err error) {
 	return c.pushChanges(path)
 }
 
-func (c *Command) GitFetch(path string) {
-	execute(exec.Command("git", "fetch"), &bytes.Buffer{}, path)
+func (c *Command) PullOrigin(path string) (err error) {
+	return execute(exec.Command("git", "pull", "origin", getCurrentBranch(path)), &bytes.Buffer{}, path)
 }
 
 func (c *Command) checkOut(path, targetBranch string) (err error) {
@@ -115,8 +114,12 @@ func (c *Command) pushChanges(path string) error {
 
 }
 
-func (c *Command) pullOrigin(path string) (err error) {
-	return execute(exec.Command("git", "pull", "origin", getCurrentBranch(path)), &bytes.Buffer{}, path)
+func (c *Command) checkoutAndPull(path, targetBranch string) (err error) {
+	err = c.checkOut(path, targetBranch)
+	if err != nil {
+		return
+	}
+	return c.PullOrigin(path)
 }
 
 //git branch | grep \* | cut -d ' ' -f2
@@ -144,12 +147,4 @@ func execute(cmd *exec.Cmd, outb *bytes.Buffer, t ...string) (err error) {
 		return errors.Wrap(err, errb.String())
 	}
 	return
-}
-
-func (c *Command) checkoutAndPull(path, targetBranch string) (err error) {
-	err = c.checkOut(path, targetBranch)
-	if err != nil {
-		return
-	}
-	return c.pullOrigin(path)
 }

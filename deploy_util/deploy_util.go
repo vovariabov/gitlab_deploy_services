@@ -30,8 +30,8 @@ func main() {
 	msCollection := ms_object.InitMsObj(s)
 
 	parser := &docopt.Parser{OptionsFirst: false}
-	args, _ := parser.ParseArgs(usage, nil, "huy")
-	fmt.Printf("%+v %T", args, args)
+	args, _ := parser.ParseArgs(usage, nil, "1.0")
+//	fmt.Printf("%+v %T", args, args)
 	if args[import_].(bool) {
 		if args[all].(bool) {
 			for _, ms := range msCollection.Mss {

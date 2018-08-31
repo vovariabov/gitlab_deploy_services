@@ -47,7 +47,7 @@ func (g *GitLabPackage) DeployServiceToStaging() (err error) {
 	if err != nil {
 		return
 	}
-	return c.DeployToProduction(g.Name)
+	return c.DeployToStaging(g.Name)
 }
 
 func (g *GitLabPackage) DeployServiceToProduction() (err error) {

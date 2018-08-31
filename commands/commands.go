@@ -84,8 +84,8 @@ func (c *Command) GitFetch(path string) {
 	execute(exec.Command("git", "fetch"), &bytes.Buffer{}, path)
 }
 
-func (c *Command) checkOut(msName, targetBranch string) (err error) {
-	return execute(exec.Command("git", "checkout", targetBranch), &bytes.Buffer{}, c.basePath+msName)
+func (c *Command) checkOut(path, targetBranch string) (err error) {
+	return execute(exec.Command("git", "checkout", targetBranch), &bytes.Buffer{}, path)
 }
 
 func (c *Command) merge(path string, sourceBranch string, targetBranch string) (err error) {

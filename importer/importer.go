@@ -1,19 +1,24 @@
 package importer
 
 import (
-	"github.com/vovariabov/gitlab_deploy_services/commands"
 	"strings"
+
 	"github.com/pkg/errors"
+	"github.com/vovariabov/gitlab_deploy_services/commands"
 )
 
-
 const (
-	DOMAIN     = "gitlab.qarea.org"
-	GROUP      = "tgms"
-	TGMSDEPLOY = "tgms-deploy"
+	DOMAIN       = "gitlab.qarea.org"
+	GROUP        = "tgms"
+	TGMSDEPLOY   = "tgms-deploy"
 	gitRepoPath  = "git@%v:%v/%v.git"
 	existsErrMsg = "already exists"
 )
+
+func InitImporter() Importer {
+	return &GitLabPackage{}
+}
+
 type Importer interface {
 	Import() error
 	Branch() ([]string, error)
@@ -52,14 +57,14 @@ func (g *GitLabPackage) Branch() (branches []string, err error) {
 //	return c.Merge(g.Name, sourceBranch, targetBranch)
 //}
 
-func (g *GitLabPackage) GetPath() string{
-	return 	commands.GoPathSrc()+g.Domain+"/"+g.Group+"/"+g.Name
+func (g *GitLabPackage) GetPath() string {
+	return commands.GoPathSrc() + g.Domain + "/" + g.Group + "/" + g.Name
 }
 
 func Import(domain, group, name string) (*GitLabPackage, error) {
 	var g = GitLabPackage{
-		Name: name,
-		Group: group,
+		Name:   name,
+		Group:  group,
 		Domain: domain,
 	}
 	err := g.Import()
@@ -67,5 +72,5 @@ func Import(domain, group, name string) (*GitLabPackage, error) {
 }
 
 func cloneExistsErr(err error) bool {
-	return strings.Contains(err.Error(), existsErrMsg) 
+	return strings.Contains(err.Error(), existsErrMsg)
 }

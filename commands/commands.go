@@ -8,8 +8,9 @@ import (
 
 	"os"
 
-	"github.com/pkg/errors"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 const (
@@ -64,7 +65,15 @@ func (c *Command) Branch(msName string) (branches []string, err error) {
 func (c *Command) DeployToStaging(msName string) (err error) {
 	var path = c.basePath + msName
 	c.GitFetch(path)
-	err = c.merge(path, dev, staging)
+	err = c.checkoutAndPull(path, dev)
+	if err != nil {
+		return
+	}
+	err = c.checkoutAndPull(path, staging)
+	if err != nil {
+		return
+	}
+	err = c.merge(path, dev)
 	if err != nil {
 		return err
 	}
@@ -74,9 +83,17 @@ func (c *Command) DeployToStaging(msName string) (err error) {
 func (c *Command) DeployToProduction(msName string) (err error) {
 	var path = c.basePath + msName
 	c.GitFetch(path)
-	err = c.merge(path, staging, master)
+	err = c.checkoutAndPull(path, staging)
 	if err != nil {
-		return err
+		return
+	}
+	err = c.checkoutAndPull(path, master)
+	if err != nil {
+		return
+	}
+	err = c.merge(path, staging)
+	if err != nil {
+		return
 	}
 	return c.pushChanges(path)
 }
@@ -89,17 +106,17 @@ func (c *Command) checkOut(path, targetBranch string) (err error) {
 	return execute(exec.Command("git", "checkout", targetBranch), &bytes.Buffer{}, path)
 }
 
-func (c *Command) merge(path string, sourceBranch string, targetBranch string) (err error) {
-	err = c.checkOut(path, targetBranch)
-	if err != nil {
-		return
-	}
+func (c *Command) merge(path string, sourceBranch string) (err error) {
 	return execute(exec.Command("git", "merge", sourceBranch), &bytes.Buffer{}, path)
 }
 
 func (c *Command) pushChanges(path string) error {
 	return execute(exec.Command("git", "push", "origin", getCurrentBranch(path)), &bytes.Buffer{}, path)
 
+}
+
+func (c *Command) pullOrigin(path string) (err error) {
+	return execute(exec.Command("git", "pull", "origin", getCurrentBranch(path)), &bytes.Buffer{}, path)
 }
 
 //git branch | grep \* | cut -d ' ' -f2
@@ -127,4 +144,12 @@ func execute(cmd *exec.Cmd, outb *bytes.Buffer, t ...string) (err error) {
 		return errors.Wrap(err, errb.String())
 	}
 	return
+}
+
+func (c *Command) checkoutAndPull(path, targetBranch string) (err error) {
+	err = c.checkOut(path, targetBranch)
+	if err != nil {
+		return
+	}
+	return c.pullOrigin(path)
 }

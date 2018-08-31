@@ -1,7 +1,7 @@
 package importer
 
 import (
-	"gitlab_deploy_services/commands"
+	"github.com/vovariabov/gitlab_deploy_services/commands"
 	"strings"
 )
 

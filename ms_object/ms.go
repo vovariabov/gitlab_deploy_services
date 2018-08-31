@@ -1,7 +1,7 @@
 package ms_object
 
 import (
-	"gitlab_deploy_services/importer"
+	"github.com/vovariabov/gitlab_deploy_services/importer"
 )
 
 func InitMsObj(mss []importer.GitLabPackage) MsObj {

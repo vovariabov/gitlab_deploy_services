@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"gitlab_deploy_services"
-	"gitlab_deploy_services/importer"
-	"gitlab_deploy_services/ms_object"
+	"github.com/vovariabov/gitlab_deploy_services"
+	"github.com/vovariabov/gitlab_deploy_services/importer"
+	"github.com/vovariabov/gitlab_deploy_services/ms_object"
 
 	"github.com/docopt/docopt-go"
 )

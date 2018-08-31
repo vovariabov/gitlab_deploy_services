@@ -1,7 +1,7 @@
 package gitlab_deploy_services
 
 import (
-	"gitlab_deploy_services/importer"
+	"github.com/vovariabov/gitlab_deploy_services/importer"
 	"io/ioutil"
 
 	"github.com/go-yaml/yaml"

@@ -18,17 +18,18 @@ const (
 func main() {
 	usage := `GitLab Deploy Services
 	Usage: 	deploy_util import (--all | <service>...)
-			deploy_util deploy_to_staging (--all | <service>...)
-			deploy_util deploy_to_production (--all | <service>...)
+		deploy_util deploy_to_staging (--all | <service>...)
+		deploy_util deploy_to_production (--all | <service>...)
 	`
-	tgmsDeploy, err := importer.Import(importer.DOMAIN, importer.GROUP, importer.TGMSDEPLOY)
-	if err != nil {
-		panic(err)
-	}
+
 	parser := &docopt.Parser{OptionsFirst: false}
 	args, _ := parser.ParseArgs(usage, nil, "1.0")
 //	fmt.Printf("%+v %T", args, args)
 	if args[import_].(bool) {
+		tgmsDeploy, err := importer.Import(importer.DOMAIN, importer.GROUP, importer.TGMSDEPLOY)
+		if err != nil {
+			panic(err)
+		}
 		s, err := gitlab_deploy_services.FetchServices(tgmsDeploy)
 		if err != nil {
 			fmt.Println(err)
@@ -52,6 +53,10 @@ func main() {
 		}
 	}
 	if args[deploy_to_staging].(bool) {
+		tgmsDeploy, err := importer.Import(importer.DOMAIN, importer.GROUP, importer.TGMSDEPLOY)
+		if err != nil {
+			panic(err)
+		}
 		s, err := gitlab_deploy_services.FetchServices(tgmsDeploy)
 		if err != nil {
 			fmt.Println(err)
@@ -75,7 +80,10 @@ func main() {
 		}
 	}
 	if args[deploy_to_production].(bool) {
-
+		tgmsDeploy, err := importer.Import(importer.DOMAIN, importer.GROUP, importer.TGMSDEPLOY)
+		if err != nil {
+			panic(err)
+		}
 		s, err := gitlab_deploy_services.FetchServices(tgmsDeploy)
 		if err != nil {
 			fmt.Println(err)

@@ -1,10 +1,8 @@
 package main
 
 import (
-	"github.com/vovariabov/gitlab_deploy_services/ms_object"
-
-	"github.com/vovariabov/gitlab_deploy_services"
-	"github.com/vovariabov/gitlab_deploy_services/importer"
+	"github.com/docopt/docopt-go"
+	"fmt"
 )
 
 func main() {
@@ -26,28 +24,29 @@ func main() {
 	//  --moored      Moored (anchored) mine.
 	//  --drifting    Drifting mine.`
 
-	//	usage := `GitLab Deploy Services
-	//Usage:  deploy_util [--version] [--branch=<branch>] <command> [<args>...]
-	//
-	//
-	//		load <file>
-	//		deploy_util list [--version]
-	//		deploy_util service [--version] [--branch=<branch>]
-	//		deploy_util deploy (<service> <branch>)...
-	//		deploy_util -h | --help
-	//`
-	//	arguments, _ := docopt.ParseDoc(usage)
-	//	fmt.Println(arguments)
+	usage := `GitLab Deploy Services
+	Usage:  deploy_util [-v] <command> [<args>...]
+			deploy_util import (--all | <service>...)
+			deploy_util deploy_to_staging (--all | <service>...)
+			deploy_util deploy_to_production (--all | <service>...)
+	`
+	arguments, err := docopt.ParseDoc(usage)
 
-	//parser := &docopt.Parser{OptionsFirst: true}
-	//args, err := parser.ParseArgs(usage, nil, "huy")
-	tgmsDeploy, err := importer.Import(importer.DOMAIN, importer.GROUP, importer.TGMSDEPLOY)
+	fmt.Sprintf("%+v", arguments)
+
+	parser := &docopt.Parser{OptionsFirst: true}
+	args, err := parser.ParseArgs(usage, nil, "huy")
+	if err != nil {
+		fmt.Println("ERR:", err)
+	}
+	fmt.Println(args)
+
+	//tgmsDeploy, err := importer.Import(importer.DOMAIN, importer.GROUP, importer.TGMSDEPLOY)
 	if err != nil {
 		panic(err)
 	}
-	s, err := gitlab_deploy_services.FetchServices(tgmsDeploy)
-
-	msCollection := ms_object.InitMsObj(s)
-	msCollection.Mss["planningms"].Import()
-
+	//s, err := gitlab_deploy_services.FetchServices(tgmsDeploy)
+	//
+	//msCollection := ms_object.InitMsObj(s)
+	//msCollection.Mss["planningms"].Import()
 }
